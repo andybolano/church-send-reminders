@@ -22,11 +22,11 @@ class GoogleSheetsService {
     try {
       let credentials;
 
-      // Railway: usar variable de entorno (prioridad)
+      // Opción 1: JSON directo
       if (process.env.GOOGLE_SERVICE_ACCOUNT_KEY) {
         credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
       }
-      // Railway: alternativo con Base64
+      // Opción 2: Base64 (Railway y Local)
       else if (process.env.GOOGLE_CREDENTIALS_BASE64) {
         const decoded = Buffer.from(
           process.env.GOOGLE_CREDENTIALS_BASE64,
@@ -34,14 +34,10 @@ class GoogleSheetsService {
         ).toString();
         credentials = JSON.parse(decoded);
       }
-      // Local: usar archivo
-      else if (fs.existsSync(config.googleSheets.credentialsPath)) {
-        credentials = JSON.parse(
-          fs.readFileSync(config.googleSheets.credentialsPath)
-        );
-      } else {
+      // Error: No se configuraron variables de entorno
+      else {
         throw new Error(
-          "No se encontraron credenciales de Google. Configura GOOGLE_SERVICE_ACCOUNT_KEY o credentials.json"
+          "No se encontraron credenciales de Google en variables de entorno. Configura GOOGLE_SERVICE_ACCOUNT_KEY o GOOGLE_CREDENTIALS_BASE64"
         );
       }
 
