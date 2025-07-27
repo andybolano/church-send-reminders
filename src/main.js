@@ -169,34 +169,7 @@ class ReminderApp {
     logger.info(`🌐 ${process.env.NODE_ENV || "development"}`);
   }
 
-  /**
-   * Muestra información de uso
-   * @private
-   */
-  _showUsage() {
-    console.log("\n📖 USO (Railway Optimized):");
-    console.log("---------------------------");
-    console.log("node src/main.js [opción]");
-    console.log("");
-    console.log("OPCIONES:");
-    console.log("  (ninguna)      Ejecutar proceso completo (por defecto)");
-    console.log("  --test         Probar conectividad de servicios");
-    console.log("  --notifications Solo enviar notificaciones iniciales");
-    console.log("  --reminders    Solo enviar recordatorios");
-    console.log("  --diagnostic   Mostrar información de diagnóstico");
-    console.log("");
-    console.log("EJEMPLOS RAILWAY:");
-    console.log(
-      "  npm start             # Proceso completo (para Railway Cron)"
-    );
-    console.log("  npm test              # Probar conectividad");
-    console.log("  npm run notifications # Solo notificaciones");
-    console.log("");
-    console.log("🚀 RAILWAY CRON SETUP:");
-    console.log("   Comando: npm start");
-    console.log("   Schedule: 0 8 * * 0,2,3,5,6");
-    console.log("   Timezone: America/Bogota");
-  }
+
 }
 
 /**
