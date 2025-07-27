@@ -106,25 +106,22 @@ class ReminderApp {
    * @private
    */
   async _runTests() {
-    logger.info("🧪 Ejecutando pruebas de conectividad...");
+    logger.info("🧪 Probando conectividad...");
 
     const results = await this.notificationService.testConnectivity();
-
-    console.log("\n📊 RESULTADOS DE CONECTIVIDAD:");
-    console.log("================================");
 
     if (results.googleSheets.success) {
       logger.success(
         `Google Sheets: ✅ Conectado (${results.googleSheets.recordCount} registros)`
       );
     } else {
-      logger.error(`Google Sheets: ❌ Error - ${results.googleSheets.error}`);
+      logger.error(`Google Sheets: ❌ ${results.googleSheets.error}`);
     }
 
     if (results.twilio.success) {
-      logger.success(`Twilio: ✅ Conectado (${results.twilio.accountName})`);
+      logger.success(`Twilio: ✅ Conectado`);
     } else {
-      logger.error(`Twilio: ❌ Error - ${results.twilio.error}`);
+      logger.error(`Twilio: ❌ ${results.twilio.error}`);
     }
 
     return results;
@@ -167,24 +164,9 @@ class ReminderApp {
    * @private
    */
   _showStartupInfo() {
-    console.log("\n" + "=".repeat(60));
-    console.log("🎤 SISTEMA DE RECORDATORIOS PARA PREDICADORES");
-    console.log("🚀 OPTIMIZADO PARA RAILWAY DEPLOYMENT");
-    console.log("=".repeat(60));
-    logger.info(`📅 Fecha actual: ${new Date().toLocaleDateString("es-ES")}`);
-    logger.info(
-      `🔧 Modo Twilio: ${
-        config.twilio.useTemplates
-          ? "Sandbox (Templates)"
-          : "Producción (Texto libre)"
-      }`
-    );
-    logger.info(
-      `📊 Límite recordatorios: ${config.business.reminderDaysLimit} días`
-    );
-    logger.info(`⏱️  Cooldown: ${config.business.cooldownDays} días`);
-    logger.info(`🌐 Entorno: ${process.env.NODE_ENV || "development"}`);
-    console.log("=".repeat(60));
+    console.log("🎤 Sistema de Recordatorios - Iglesia");
+    logger.info(`📅 ${new Date().toLocaleDateString("es-ES")}`);
+    logger.info(`🌐 ${process.env.NODE_ENV || "development"}`);
   }
 
   /**

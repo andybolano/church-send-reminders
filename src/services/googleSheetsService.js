@@ -24,12 +24,10 @@ class GoogleSheetsService {
 
       // Railway: usar variable de entorno (prioridad)
       if (process.env.GOOGLE_SERVICE_ACCOUNT_KEY) {
-        logger.debug("Usando credenciales de variable de entorno (Railway)");
         credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
       }
       // Railway: alternativo con Base64
       else if (process.env.GOOGLE_CREDENTIALS_BASE64) {
-        logger.debug("Usando credenciales Base64 (Railway)");
         const decoded = Buffer.from(
           process.env.GOOGLE_CREDENTIALS_BASE64,
           "base64"
@@ -38,7 +36,6 @@ class GoogleSheetsService {
       }
       // Local: usar archivo
       else if (fs.existsSync(config.googleSheets.credentialsPath)) {
-        logger.debug("Usando archivo de credenciales (Local)");
         credentials = JSON.parse(
           fs.readFileSync(config.googleSheets.credentialsPath)
         );
@@ -55,17 +52,6 @@ class GoogleSheetsService {
 
       const authClient = await this.auth.getClient();
       this.sheets = google.sheets({ version: "v4", auth: authClient });
-
-      logger.debug(
-        "✅ Autenticación con Google Sheets configurada exitosamente"
-      );
-      logger.debug(
-        `🔧 Método: ${
-          process.env.GOOGLE_SERVICE_ACCOUNT_KEY
-            ? "Variable de entorno"
-            : "Archivo local"
-        }`
-      );
     } catch (error) {
       logger.error(
         "❌ Error configurando autenticación Google Sheets:",
@@ -93,10 +79,6 @@ class GoogleSheetsService {
     await this._ensureAuth();
 
     try {
-      logger.debug(
-        `Leyendo datos de Sheet ID: ${config.googleSheets.sheetId}, Rango: ${config.googleSheets.range}`
-      );
-
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId: config.googleSheets.sheetId,
         range: config.googleSheets.range,
@@ -121,8 +103,7 @@ class GoogleSheetsService {
         return obj;
       });
 
-      logger.info(`✅ Datos leídos exitosamente: ${data.length} registros`);
-      logger.debug(`Columnas detectadas: ${headers.join(", ")}`);
+      logger.info(`✅ Datos leídos: ${data.length} registros`);
 
       return data;
     } catch (error) {
@@ -153,8 +134,6 @@ class GoogleSheetsService {
       const columnLetter = this._getColumnLetter(columnIndex);
       const cellRange = `${columnLetter}${rowIndex + 2}`; // +2 porque row 1 son headers y rowIndex es 0-based
 
-      logger.debug(`Actualizando celda ${cellRange} con valor: ${value}`);
-
       const updateResponse = await this.sheets.spreadsheets.values.update({
         spreadsheetId: config.googleSheets.sheetId,
         range: cellRange,
@@ -163,11 +142,6 @@ class GoogleSheetsService {
           values: [[value]],
         },
       });
-
-      logger.info(`✅ Celda ${cellRange} actualizada exitosamente`);
-      logger.debug(
-        `Respuesta de Google: ${updateResponse.data.updatedCells} celdas actualizadas`
-      );
 
       return true;
     } catch (error) {

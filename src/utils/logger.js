@@ -40,36 +40,6 @@ class Logger {
     }
   }
 
-  processing(message, ...args) {
-    if (this.level >= Logger.LEVELS.INFO) {
-      console.log(`🔄 ${message}`, ...args);
-    }
-  }
-
-  notification(message, ...args) {
-    if (this.level >= Logger.LEVELS.INFO) {
-      console.log(`📮 ${message}`, ...args);
-    }
-  }
-
-  reminder(message, ...args) {
-    if (this.level >= Logger.LEVELS.INFO) {
-      console.log(`⏰ ${message}`, ...args);
-    }
-  }
-
-  today(message, ...args) {
-    if (this.level >= Logger.LEVELS.INFO) {
-      console.log(`🎤 ${message}`, ...args);
-    }
-  }
-
-  skip(message, ...args) {
-    if (this.level >= Logger.LEVELS.INFO) {
-      console.log(`⏭️  ${message}`, ...args);
-    }
-  }
-
   summary(message, ...args) {
     if (this.level >= Logger.LEVELS.INFO) {
       console.log(`📊 ${message}`, ...args);
@@ -77,21 +47,7 @@ class Logger {
   }
 
   logStep(stepNumber, stepName) {
-    this.processing(`PASO ${stepNumber}: ${stepName}`);
-  }
-
-  logUserProcessing(name, phone, status) {
-    console.log(`\n👤 Procesando: ${name}`);
-    console.log(`📱 Teléfono: ${phone}`);
-    if (status) {
-      console.log(`📮 Estado: ${status}`);
-    }
-  }
-
-  logDateInfo(name, date, daysUntil) {
-    console.log(
-      `📅 ${name} - Fecha: ${date} (en ${Math.round(daysUntil)} días)`
-    );
+    this.info(`PASO ${stepNumber}: ${stepName}`);
   }
 
   logMessageSent(type, name, sid) {
@@ -111,16 +67,14 @@ class Logger {
   }
 
   logFinalSummary(stats) {
-    console.log("\n" + "=".repeat(50));
-    this.summary("RESUMEN DE EJECUCIÓN:");
-    console.log("=".repeat(50));
-    this.summary(`📋 Registros procesados: ${stats.processed}`);
-    this.summary(`📮 Notificaciones iniciales: ${stats.notifications}`);
-    this.summary(`⏰ Recordatorios enviados: ${stats.reminders}`);
-    this.summary(`🎤 Recordatorios del día: ${stats.todayReminders}`);
-    this.summary(`📤 Total mensajes: ${stats.totalMessages}`);
-    this.summary(`👥 Usuarios únicos contactados: ${stats.uniqueUsers}`);
-    console.log("=".repeat(50));
+    this.info(
+      `📊 Procesados: ${stats.processed} | Mensajes: ${stats.totalMessages} | Usuarios: ${stats.uniqueUsers}`
+    );
+    if (stats.notifications > 0)
+      this.info(`📮 Notificaciones: ${stats.notifications}`);
+    if (stats.reminders > 0) this.info(`⏰ Recordatorios: ${stats.reminders}`);
+    if (stats.todayReminders > 0)
+      this.info(`🎤 Día actual: ${stats.todayReminders}`);
   }
 }
 

@@ -79,9 +79,6 @@ class MessageService {
         config.twilio.fromNumber
       );
 
-      // Log del mensaje que se va a enviar
-      this._logMessageOptions(messageOptions, predicador, messageType);
-
       // Enviar mensaje
       const response = await this.client.messages.create(messageOptions);
 
@@ -167,22 +164,7 @@ class MessageService {
     return results;
   }
 
-  /**
-   * Registra información del mensaje que se va a enviar
-   * @private
-   */
-  _logMessageOptions(messageOptions, predicador, messageType) {
-    logger.debug(
-      `📋 Preparando mensaje ${messageType} para ${predicador.nombre}`
-    );
 
-    if (messageOptions.contentSid) {
-      logger.debug(`🔧 Template: ${messageOptions.contentSid}`);
-      logger.debug(`🔧 Variables: ${messageOptions.contentVariables}`);
-    } else {
-      logger.debug(`💬 Mensaje: ${messageOptions.body}`);
-    }
-  }
 
   /**
    * Pausa la ejecución por un tiempo determinado

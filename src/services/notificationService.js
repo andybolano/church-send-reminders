@@ -103,12 +103,6 @@ class NotificationService {
 
         // Verificar si necesita notificación inicial
         if (!predicador.hasBeenNotified()) {
-          logger.logUserProcessing(
-            predicador.nombre,
-            predicador.telefono,
-            `Notificado: "${predicador.notificado}"`
-          );
-
           // Enviar notificación
           const result = await this.messageService.sendNotification(predicador);
 
@@ -131,8 +125,6 @@ class NotificationService {
             );
             stats.errors++;
           }
-        } else {
-          logger.info(`${predicador.nombre} - Ya notificado anteriormente`);
         }
       } catch (error) {
         logger.error(
@@ -155,22 +147,11 @@ class NotificationService {
       try {
         // Saltar si ya recibió mensaje hoy
         if (this.sentMessagesToday.has(predicador.telefono)) {
-          logger.skip(
-            `${predicador.nombre} - Ya recibió mensaje en esta ejecución`
-          );
           continue;
         }
 
         // Verificar si predica pronto
         if (predicador.preachesSoon()) {
-          const daysUntil = predicador.getDaysUntilPreaching();
-
-          logger.logUserProcessing(
-            predicador.nombre,
-            predicador.telefono,
-            `Predica en ${Math.round(daysUntil)} días`
-          );
-
           // Verificar cooldown
           if (predicador.canReceiveReminder()) {
             // Enviar recordatorio
@@ -192,13 +173,6 @@ class NotificationService {
               );
               stats.errors++;
             }
-          } else {
-            const daysSince = predicador.getDaysSinceLastReminder();
-            logger.skip(
-              `${predicador.nombre} - Cooldown activo (${Math.round(
-                daysSince
-              )} días desde último mensaje)`
-            );
           }
         }
       } catch (error) {
@@ -222,18 +196,11 @@ class NotificationService {
       try {
         // Saltar si ya recibió mensaje hoy
         if (this.sentMessagesToday.has(predicador.telefono)) {
-          logger.skip(
-            `${predicador.nombre} - Ya recibió mensaje en esta ejecución`
-          );
           continue;
         }
 
         // Verificar si predica hoy
         if (predicador.preachesToday()) {
-          logger.today(
-            `${predicador.nombre} predica HOY - Verificando último recordatorio...`
-          );
-
           // Verificar cooldown (mínimo 1 día)
           const daysSince = predicador.getDaysSinceLastReminder();
           const canSend = daysSince === null || daysSince >= 1;
@@ -260,8 +227,6 @@ class NotificationService {
               );
               stats.errors++;
             }
-          } else {
-            logger.skip(`${predicador.nombre} - Ya recibió mensaje hoy`);
           }
         }
       } catch (error) {
