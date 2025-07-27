@@ -1,11 +1,11 @@
-const cron = require("node-cron");
+// Railway-optimized version - no node-cron needed
 const NotificationService = require("./services/notificationService");
 const config = require("./config/environment");
 const logger = require("./utils/logger");
 
 /**
  * Aplicación principal para el sistema de recordatorios
- * Maneja diferentes modos de ejecución: cron, once, test
+ * Optimizada para Railway Cron - ejecución stateless
  */
 class ReminderApp {
   constructor() {
@@ -25,9 +25,6 @@ class ReminderApp {
 
       // Ejecutar según el modo
       switch (mode) {
-        case "cron":
-          await this._startCronJob();
-          break;
         case "once":
           await this._runOnce();
           break;
@@ -44,8 +41,11 @@ class ReminderApp {
           await this._runDiagnostic();
           break;
         default:
-          this._showUsage();
+          await this._runOnce(); // Default: ejecutar proceso completo
       }
+
+      // Terminar proceso explícitamente para Railway
+      process.exit(0);
     } catch (error) {
       logger.error("Error en aplicación principal:", error.message);
       process.exit(1);
@@ -53,59 +53,19 @@ class ReminderApp {
   }
 
   /**
-   * Inicia el cron job
-   * @private
-   */
-  async _startCronJob() {
-    logger.info("⏰ Iniciando cron job...");
-    logger.info(`📅 Programación: ${config.business.cronSchedule}`);
-    logger.info("   Dom, Mar, Mié, Vie, Sáb a las 8:00 AM");
-
-    // Validar expresión cron
-    if (!cron.validate(config.business.cronSchedule)) {
-      throw new Error(
-        `Expresión cron inválida: ${config.business.cronSchedule}`
-      );
-    }
-
-    // Iniciar cron job
-    cron.schedule(
-      config.business.cronSchedule,
-      async () => {
-        logger.info("\n🔔 Cron job ejecutándose...");
-        try {
-          await this.notificationService.executeNotificationProcess();
-          logger.success("✅ Cron job completado exitosamente");
-        } catch (error) {
-          logger.error("❌ Error en cron job:", error.message);
-        }
-      },
-      {
-        scheduled: true,
-        timezone: "America/Bogota", // Zona horaria Colombia
-      }
-    );
-
-    logger.success("🚀 Cron job iniciado exitosamente");
-    logger.info("⏳ Esperando próxima ejecución programada...");
-
-    // Mantener el proceso activo
-    process.on("SIGINT", () => {
-      logger.info("\n🛑 Deteniendo cron job...");
-      process.exit(0);
-    });
-  }
-
-  /**
-   * Ejecuta una vez y termina
+   * Ejecuta una vez y termina (modo principal para Railway Cron)
    * @private
    */
   async _runOnce() {
-    logger.info("🎯 Ejecutando una vez...");
+    logger.info("🎯 Ejecutando proceso de recordatorios...");
 
     const stats = await this.notificationService.executeNotificationProcess();
 
-    logger.success("✅ Ejecución completada");
+    logger.success("✅ Ejecución completada exitosamente");
+    logger.info(
+      `📊 Resumen: ${stats.totalMessages} mensajes enviados a ${stats.uniqueUsers} usuarios`
+    );
+
     return stats;
   }
 
@@ -193,14 +153,12 @@ class ReminderApp {
   _parseArguments() {
     const args = process.argv.slice(2);
 
-    if (args.includes("--cron")) return "cron";
-    if (args.includes("--once")) return "once";
     if (args.includes("--test")) return "test";
     if (args.includes("--notifications")) return "notifications";
     if (args.includes("--reminders")) return "reminders";
     if (args.includes("--diagnostic")) return "diagnostic";
 
-    // Modo por defecto
+    // Modo por defecto: ejecutar proceso completo
     return "once";
   }
 
@@ -211,6 +169,7 @@ class ReminderApp {
   _showStartupInfo() {
     console.log("\n" + "=".repeat(60));
     console.log("🎤 SISTEMA DE RECORDATORIOS PARA PREDICADORES");
+    console.log("🚀 OPTIMIZADO PARA RAILWAY DEPLOYMENT");
     console.log("=".repeat(60));
     logger.info(`📅 Fecha actual: ${new Date().toLocaleDateString("es-ES")}`);
     logger.info(
@@ -224,6 +183,7 @@ class ReminderApp {
       `📊 Límite recordatorios: ${config.business.reminderDaysLimit} días`
     );
     logger.info(`⏱️  Cooldown: ${config.business.cooldownDays} días`);
+    logger.info(`🌐 Entorno: ${process.env.NODE_ENV || "development"}`);
     console.log("=".repeat(60));
   }
 
@@ -232,22 +192,28 @@ class ReminderApp {
    * @private
    */
   _showUsage() {
-    console.log("\n📖 USO:");
-    console.log("--------");
+    console.log("\n📖 USO (Railway Optimized):");
+    console.log("---------------------------");
     console.log("node src/main.js [opción]");
     console.log("");
     console.log("OPCIONES:");
-    console.log("  --once         Ejecutar una vez y terminar (por defecto)");
-    console.log("  --cron         Iniciar cron job programado");
+    console.log("  (ninguna)      Ejecutar proceso completo (por defecto)");
     console.log("  --test         Probar conectividad de servicios");
     console.log("  --notifications Solo enviar notificaciones iniciales");
     console.log("  --reminders    Solo enviar recordatorios");
     console.log("  --diagnostic   Mostrar información de diagnóstico");
     console.log("");
-    console.log("EJEMPLOS:");
-    console.log("  npm run send          # Ejecutar una vez");
-    console.log("  npm run send:cron     # Iniciar cron job");
-    console.log("  npm run test          # Probar conectividad");
+    console.log("EJEMPLOS RAILWAY:");
+    console.log(
+      "  npm start             # Proceso completo (para Railway Cron)"
+    );
+    console.log("  npm test              # Probar conectividad");
+    console.log("  npm run notifications # Solo notificaciones");
+    console.log("");
+    console.log("🚀 RAILWAY CRON SETUP:");
+    console.log("   Comando: npm start");
+    console.log("   Schedule: 0 8 * * 0,2,3,5,6");
+    console.log("   Timezone: America/Bogota");
   }
 }
 

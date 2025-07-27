@@ -15,13 +15,38 @@ class GoogleSheetsService {
 
   /**
    * Configura la autenticación con Google Sheets
+   * Compatible con Railway (variables de entorno) y local (archivo)
    * @private
    */
   async _setupAuth() {
     try {
-      const credentials = JSON.parse(
-        fs.readFileSync(config.googleSheets.credentialsPath)
-      );
+      let credentials;
+
+      // Railway: usar variable de entorno (prioridad)
+      if (process.env.GOOGLE_SERVICE_ACCOUNT_KEY) {
+        logger.debug("Usando credenciales de variable de entorno (Railway)");
+        credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
+      }
+      // Railway: alternativo con Base64
+      else if (process.env.GOOGLE_CREDENTIALS_BASE64) {
+        logger.debug("Usando credenciales Base64 (Railway)");
+        const decoded = Buffer.from(
+          process.env.GOOGLE_CREDENTIALS_BASE64,
+          "base64"
+        ).toString();
+        credentials = JSON.parse(decoded);
+      }
+      // Local: usar archivo
+      else if (fs.existsSync(config.googleSheets.credentialsPath)) {
+        logger.debug("Usando archivo de credenciales (Local)");
+        credentials = JSON.parse(
+          fs.readFileSync(config.googleSheets.credentialsPath)
+        );
+      } else {
+        throw new Error(
+          "No se encontraron credenciales de Google. Configura GOOGLE_SERVICE_ACCOUNT_KEY o credentials.json"
+        );
+      }
 
       this.auth = new google.auth.GoogleAuth({
         credentials,
@@ -31,10 +56,19 @@ class GoogleSheetsService {
       const authClient = await this.auth.getClient();
       this.sheets = google.sheets({ version: "v4", auth: authClient });
 
-      logger.debug("Autenticación con Google Sheets configurada exitosamente");
+      logger.debug(
+        "✅ Autenticación con Google Sheets configurada exitosamente"
+      );
+      logger.debug(
+        `🔧 Método: ${
+          process.env.GOOGLE_SERVICE_ACCOUNT_KEY
+            ? "Variable de entorno"
+            : "Archivo local"
+        }`
+      );
     } catch (error) {
       logger.error(
-        "Error configurando autenticación Google Sheets:",
+        "❌ Error configurando autenticación Google Sheets:",
         error.message
       );
       throw new Error(`Error de autenticación: ${error.message}`);

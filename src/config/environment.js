@@ -36,7 +36,6 @@ class EnvironmentConfig {
       reminderDaysLimit: 15,
       cooldownDays: 7,
       yesMarker: "sí",
-      cronSchedule: "0 8 * * 0,2,3,5,6", // Dom, Mar, Mié, Vie, Sáb 8:00 AM
     };
   }
 

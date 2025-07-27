@@ -153,6 +153,7 @@ TWILIO_TEMPLATE_RECORDATORIO=HX...
 | **Debugging**         | Logs básicos               | Logging estructurado            |
 | **Configuración**     | Variables globales         | Configuración centralizada      |
 | **Validación**        | Manual y básica            | Automática y robusta            |
+| **💰 Costo Railway** | node-cron 24/7: ~$20-40/mes | Railway Cron: ~$2-5/mes (**90% ahorro**) |
 
 ## 🧪 Testing y Diagnóstico
 
