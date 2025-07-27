@@ -25,8 +25,6 @@ class EnvironmentConfig {
     return {
       sheetId: process.env.GOOGLE_SHEET_ID,
       range: process.env.GOOGLE_SHEET_RANGE || "A:E",
-      credentialsPath:
-        process.env.GOOGLE_CREDENTIALS_PATH || "./credentials.json",
     };
   }
 
@@ -47,6 +45,17 @@ class EnvironmentConfig {
     if (missing.length > 0) {
       throw new Error(
         `Missing required environment variables: ${missing.join(", ")}`
+      );
+    }
+
+    // Validar que al menos una variable de credenciales de Google esté presente
+    const hasGoogleCredentials =
+      process.env.GOOGLE_SERVICE_ACCOUNT_KEY ||
+      process.env.GOOGLE_CREDENTIALS_BASE64;
+
+    if (!hasGoogleCredentials) {
+      throw new Error(
+        "Missing Google credentials: Set either GOOGLE_SERVICE_ACCOUNT_KEY or GOOGLE_CREDENTIALS_BASE64"
       );
     }
   }

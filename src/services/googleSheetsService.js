@@ -228,12 +228,6 @@ class GoogleSheetsService {
       errors.push("GOOGLE_SHEET_ID no configurado");
     }
 
-    if (!fs.existsSync(config.googleSheets.credentialsPath)) {
-      errors.push(
-        `Archivo de credenciales no encontrado: ${config.googleSheets.credentialsPath}`
-      );
-    }
-
     if (errors.length > 0) {
       throw new Error(`Configuración inválida: ${errors.join(", ")}`);
     }
@@ -253,9 +247,11 @@ class GoogleSheetsService {
         configured: true,
         sheetId: config.googleSheets.sheetId,
         range: config.googleSheets.range,
-        credentialsPath: config.googleSheets.credentialsPath,
         headers: headers,
         columnsCount: headers.length,
+        credentialsMethod: process.env.GOOGLE_CREDENTIALS_BASE64
+          ? "Environment (Base64)"
+          : "Environment (JSON)",
       };
     } catch (error) {
       return {
