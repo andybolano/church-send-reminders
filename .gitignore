@@ -7,6 +7,10 @@ npm-debug.log*
 
 # Credenciales de Google
 credentials.json
+# Allow package files for npm
+!package.json
+!package-lock.json
+# Block other json files
 *.json
 
 # Archivos de sistema
