@@ -4,11 +4,11 @@ FROM node:20-alpine
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package.json explicitly
+COPY package.json ./
 
 # Install dependencies (production only)
-RUN npm install --production --no-package-lock
+RUN npm install --production
 
 # Copy application code
 COPY . .
