@@ -1,4 +1,4 @@
-# Use official Node.js 20 image (latest LTS with newer npm)
+# Use official Node.js 20 image (latest LTS)
 FROM node:20-alpine
 
 # Set working directory
@@ -7,9 +7,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Update npm and install dependencies
-RUN npm install -g npm@latest && \
-    npm ci --omit=dev
+# Install dependencies (production only)
+RUN npm install --production --no-package-lock
 
 # Copy application code
 COPY . .
