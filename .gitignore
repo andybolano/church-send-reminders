@@ -6,7 +6,7 @@ npm-debug.log*
 .env
 
 # Credenciales de Google
-credentials.json
+credentials-google.json
 # Allow package files for npm
 !package.json
 !package-lock.json

@@ -10,8 +10,7 @@
     "notifications": "node src/main.js --notifications",
     "reminders": "node src/main.js --reminders",
     "test": "node src/main.js --test",
-    "diagnostic": "node src/main.js --diagnostic",
-    "legacy": "node send_reminders.js"
+    "diagnostic": "node src/main.js --diagnostic"
   },
   "author": "andyyairb@gmail.com",
   "license": "ISC",
