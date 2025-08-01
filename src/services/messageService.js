@@ -196,6 +196,9 @@ class MessageService {
       if (!twilioConfig.templates.reminder) {
         errors.push("TWILIO_TEMPLATE_RECORDATORIO no configurado");
       }
+      if (!twilioConfig.templates.today) {
+        errors.push("TWILIO_TEMPLATE_RECORDATORIO_HOY no configurado");
+      }
     }
 
     if (errors.length > 0) {
@@ -218,6 +221,7 @@ class MessageService {
       templates: {
         notification: twilioConfig.templates.notification,
         reminder: twilioConfig.templates.reminder,
+        today: twilioConfig.templates.today,
       },
       accountSid: twilioConfig.accountSid
         ? `${twilioConfig.accountSid.substring(0, 8)}...`

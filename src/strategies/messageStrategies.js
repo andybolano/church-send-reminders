@@ -37,17 +37,12 @@ class NotificationStrategy extends MessageStrategy {
       to: `whatsapp:${predicador.getFormattedPhone()}`,
     };
 
-    if (this.useTemplates) {
-      messageOptions.contentSid = this.templateConfig.notification;
-      messageOptions.contentVariables = JSON.stringify({
-        1: predicador.nombre,
-        2: predicador.getFormattedDate(),
-      });
-    } else {
-      messageOptions.body = `Hola ${
-        predicador.nombre
-      }, te confirmamos que el ${predicador.getFormattedDate()} predicarás. ¡Que Dios te bendiga en tu preparación!`;
-    }
+    messageOptions.contentSid = this.templateConfig.notification;
+    messageOptions.contentVariables = JSON.stringify({
+      1: predicador.nombre,
+      2: predicador.getFormattedDate(),
+      3: predicador.iglesia,
+    });
 
     return messageOptions;
   }
@@ -67,17 +62,12 @@ class ReminderStrategy extends MessageStrategy {
       to: `whatsapp:${predicador.getFormattedPhone()}`,
     };
 
-    if (this.useTemplates) {
-      messageOptions.contentSid = this.templateConfig.reminder;
-      messageOptions.contentVariables = JSON.stringify({
-        1: predicador.nombre,
-        2: predicador.getFormattedDate(),
-      });
-    } else {
-      messageOptions.body = `Hola ${
-        predicador.nombre
-      }, te recordamos que próximamente (${predicador.getFormattedDate()}) predicarás. ¡Prepárate en oración!`;
-    }
+    messageOptions.contentSid = this.templateConfig.reminder;
+    messageOptions.contentVariables = JSON.stringify({
+      1: predicador.nombre,
+      2: predicador.getFormattedDate(),
+      3: predicador.iglesia,
+    });
 
     return messageOptions;
   }
@@ -97,15 +87,11 @@ class TodayStrategy extends MessageStrategy {
       to: `whatsapp:${predicador.getFormattedPhone()}`,
     };
 
-    if (this.useTemplates) {
-      messageOptions.contentSid = this.templateConfig.reminder;
-      messageOptions.contentVariables = JSON.stringify({
-        1: predicador.nombre,
-        2: "HOY",
-      });
-    } else {
-      messageOptions.body = `¡Hola ${predicador.nombre}! 🎤 HOY es tu día de predicación. ¡Que Dios te use poderosamente y bendiga tu mensaje! 🙏`;
-    }
+    messageOptions.contentSid = this.templateConfig.today;
+    messageOptions.contentVariables = JSON.stringify({
+      1: predicador.nombre,
+      2: predicador.iglesia,
+    });
 
     return messageOptions;
   }

@@ -23,6 +23,7 @@ class Predicador {
       "recordado",
       "RECORDADO",
     ]);
+    this.iglesia = this._extractField(data, ["Iglesia", "iglesia", "IGLESIA"]);
 
     this.fecha = DateFormatter.parseToLocalDate(this.fechaRaw, this.nombre);
     this.errors = this._validate();

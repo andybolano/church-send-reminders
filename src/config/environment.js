@@ -11,11 +11,12 @@ class EnvironmentConfig {
     return {
       accountSid: process.env.TW_SID,
       authToken: process.env.TW_TOKEN,
-      fromNumber: "whatsapp:+14155238886",
+      fromNumber: process.env.TW_FROM,
       useTemplates: process.env.USE_TWILIO_TEMPLATES === "true",
       templates: {
         notification: process.env.TWILIO_TEMPLATE_NOTIFICACION,
         reminder: process.env.TWILIO_TEMPLATE_RECORDATORIO,
+        today: process.env.TWILIO_TEMPLATE_RECORDATORIO_HOY,
       },
     };
   }
